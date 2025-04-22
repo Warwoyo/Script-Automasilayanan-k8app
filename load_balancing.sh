@@ -146,7 +146,7 @@ function test_load_balancer() {
 
 function add_server_identification() {
   log "Menambahkan server info ke server.js"
-  cat > "$BASE_DIR/app/server-patch.js" << 'EOF'
+  cat > "$K8S_DIR/app/server-patch.js" << 'EOF'
 const os = require('os');
 const serverInfo = {
   hostname: os.hostname(),
@@ -164,14 +164,14 @@ app.use((req, res, next) => {
 });
 EOF
 
-cat "$BASE_DIR/app/server-patch.js" >> "$BASE_DIR/app/server.js"
+cat "$K8S_DIR/app/server-patch.js" >> "$K8S_DIR/app/server.js"
 
 }
 
 
 function rebuild_docker_image_and_apply(){
     log "Build ulang image login-app"
-    cd "$BASE_DIR/app"
+    cd "$K8S_DIR/app"
     cat server-patch.js >> server.js
     docker build -t login-app:latest .
     kubectl apply -f k8s/web-deployment-lb.yaml
