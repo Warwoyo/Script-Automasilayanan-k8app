@@ -174,6 +174,8 @@ function rebuild_docker_image_and_apply(){
     cd "$K8S_DIR/app"
     cat server-patch.js >> server.js
     docker build -t login-app:latest .
+
+    cd ..
     kubectl apply -f k8s/web-deployment-lb.yaml
     # docker save login-app:latest > login-app.tar
 
@@ -194,6 +196,7 @@ log "=== Mulai setup load balancing untuk Login Web App ==="
 deploy_web_deployment
 add_server_identification
 rebuild_docker_image_and_apply
+setup_ingress_controller
 deploy_ingress_resource
 deploy_web_service
 
