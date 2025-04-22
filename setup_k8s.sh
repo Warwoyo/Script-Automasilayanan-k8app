@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # setup_k8s.sh — Installer Docker + cri-dockerd + Kubernetes + Calico + Metrics + Dashboard
 # Usage:
-#   sudo bash setup_k8s.sh master   --master-ip 10.0.0.10 --pod-cidr 192.168.0.0/16 [--install-metrics] [--install-dashboard]
-#   sudo bash setup_k8s.sh worker   --master-ip 10.0.0.10 --token xxx --hash sha256:yyy
+#   sudo bash setup_k8s.sh master   --master-ip 172.31.26.133 --pod-cidr 192.168.0.0/16 
+#   sudo bash setup_k8s.sh worker   --master-ip 172.31.26.133 --token 3qdyl7.cia3uo9671cm0guy --hash sha256:f0bb75a71c1ae03ac8f0a3273ffb27fd8649da046f64a5e7eb1967c9e7b319a7
 
 set -euo pipefail
 
@@ -20,8 +20,6 @@ while [[ $# -gt 0 ]]; do
     --pod-cidr) POD_CIDR="$2"; shift 2;;
     --token) TOKEN="$2"; shift 2;;
     --hash) HASH="$2"; shift 2;;
-    --install-metrics) INSTALL_METRICS=true; shift;;
-    --install-dashboard) INSTALL_DASH=true; shift;;
     *) echo "Unknown arg: $1"; exit 1;;
   esac
 done
@@ -100,10 +98,11 @@ function init_master() {
   cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
   chown $(id -u):$(id -g) $HOME/.kube/config
 
+  # allow pods di master (fix CoreDNS Pending)
+  kubectl taint nodes --all node-role.kubernetes.io/control-plane- || true
+
   # install Calico
-  kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.2/manifests/tigera-operator.yaml
-  curl -O https://raw.githubusercontent.com/projectcalico/calico/v3.28.2/manifests/custom-resources.yaml
-  kubectl apply -f custom-resources.yaml
+  kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/calico.yaml
 }
 
 # 3) worker-only: join
@@ -147,8 +146,8 @@ setup_common
 
 if [[ "$ROLE" == "master" ]]; then
   init_master
-  $([[ "$INSTALL_METRICS" == true ]] && install_metrics)
-  $([[ "$INSTALL_DASH"    == true ]] && install_dashboard)
+  install_metrics
+  install_dashboard
   echo "=== Master setup selesai ==="
   echo "Gunakan 'kubeadm token create --print-join-command' untuk dapatkan perintah join."
 elif [[ "$ROLE" == "worker" ]]; then
