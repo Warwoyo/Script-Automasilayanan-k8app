@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # setup_k8s.sh — Installer Docker + cri-dockerd + Kubernetes + Calico + Metrics + Dashboard
 # Usage:
-#   sudo bash setup_k8s.sh master   --master-ip 172.31.26.133 --pod-cidr 192.168.0.0/16 
-#   sudo bash setup_k8s.sh worker   --master-ip 172.31.26.133 --token 3qdyl7.cia3uo9671cm0guy --hash sha256:f0bb75a71c1ae03ac8f0a3273ffb27fd8649da046f64a5e7eb1967c9e7b319a7
+#   sudo bash setup_k8s.sh master   --master-ip xxxxx --pod-cidr 192.168.0.0/16 
+#   sudo bash setup_k8s.sh worker   --master-ip xxxxx --token xxxx --hash sha256:xxxx
 
 set -euo pipefail
 
@@ -181,3 +181,7 @@ fi
 #   namespace: kube-system
 
 # kubectl apply -f k8s-dash.yaml
+
+
+
+NODE_IP=$(kubectl get nodes -o jsonpath='{.items[0].status.addresses[0].address}') ab -n 10000 -c 100 http://10.96.28.215
