@@ -2,6 +2,8 @@
 # deploy_login_app.sh — deploy Login Web App + MySQL ke K8s, self‑contained
 # Usage:
 #   sudo bash deploy_login_app.sh master
+# sudo bash deploy.sh master
+# sudo bash deploy.sh worker
 #   sudo bash deploy_login_app.sh worker
 
 set -euo pipefail
@@ -85,6 +87,7 @@ case "$ROLE" in
     ;;
   master)
     cleanup
+    build_image
     deploy_mysql
     deploy_web
     log ">>> Master selesai deploy. Akses via NodePort di service/login-app"
