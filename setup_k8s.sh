@@ -156,3 +156,28 @@ elif [[ "$ROLE" == "worker" ]]; then
 else
   echo "Role harus 'master' atau 'worker'"; exit 1
 fi
+
+# Generating a Token for Login: Create a service account and generate a token:
+
+# vim k8s-dash.yaml
+
+# apiVersion: v1
+# kind: ServiceAccount
+# metadata:
+#   name: widhi
+#   namespace: kube-system
+# ---
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: ClusterRoleBinding
+# metadata:
+#   name: widhi-admin
+# roleRef:
+#   apiGroup: rbac.authorization.k8s.io
+#   kind: ClusterRole
+#   name: cluster-admin
+# subjects:
+# - kind: ServiceAccount
+#   name: widhi
+#   namespace: kube-system
+
+# kubectl apply -f k8s-dash.yaml
