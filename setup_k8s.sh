@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # setup_k8s.sh — Installer Docker + cri-dockerd + Kubernetes + Calico + Metrics + Dashboard
 # Usage:
-#   sudo bash setup_k8s.sh master   --master-ip xxxxx --pod-cidr 192.168.0.0/16 
+#   sudo bash setup_k8s.sh master   --master-ip xxxxx --pod-cidr 10.244.0.0/16
 #   sudo bash setup_k8s.sh worker   --master-ip xxxxx --token xxxx --hash sha256:xxxx
 
 set -euo pipefail
